@@ -7,82 +7,33 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Edit, Trash2, Upload, Image as ImageIcon } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useGallery } from "@/hooks/useGallery";
+import { Tables } from "@/integrations/supabase/types";
 
-interface GalleryItem {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-}
+type GalleryItem = Tables<'gallery_items'>;
 
 const GalleryManager = () => {
-  const { toast } = useToast();
+  const { items, loading, addItem, updateItem, deleteItem, uploadImage } = useGallery();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<GalleryItem | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    image: "",
+    image_url: "",
     category: ""
   });
 
-  // Mock data - replace with real data after Supabase connection
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([
-    {
-      id: 1,
-      title: "Bolo de Aniversário Infantil",
-      description: "Bolo temático com decoração colorida",
-      image: "/placeholder.svg",
-      category: "infantil"
-    },
-    {
-      id: 2,
-      title: "Bolo de Casamento",
-      description: "Bolo elegante de três andares",
-      image: "/placeholder.svg",
-      category: "casamento"
-    },
-    {
-      id: 3,
-      title: "Cupcakes Personalizados",
-      description: "Cupcakes com cobertura especial",
-      image: "/placeholder.svg",
-      category: "cupcakes"
-    }
-  ]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (editingItem) {
-      // Update existing item
-      setGalleryItems(items => 
-        items.map(item => 
-          item.id === editingItem.id 
-            ? { ...item, ...formData }
-            : item
-        )
-      );
-      toast({
-        title: "Item atualizado!",
-        description: "O item da galeria foi atualizado com sucesso.",
-      });
+      await updateItem(editingItem.id, formData);
     } else {
-      // Add new item
-      const newItem: GalleryItem = {
-        id: Date.now(),
-        ...formData
-      };
-      setGalleryItems(items => [...items, newItem]);
-      toast({
-        title: "Item adicionado!",
-        description: "Novo item foi adicionado à galeria.",
-      });
+      await addItem(formData);
     }
 
-    setFormData({ title: "", description: "", image: "", category: "" });
+    setFormData({ title: "", description: "", image_url: "", category: "" });
     setEditingItem(null);
     setIsDialogOpen(false);
   };
@@ -91,33 +42,34 @@ const GalleryManager = () => {
     setEditingItem(item);
     setFormData({
       title: item.title,
-      description: item.description,
-      image: item.image,
+      description: item.description || "",
+      image_url: item.image_url,
       category: item.category
     });
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setGalleryItems(items => items.filter(item => item.id !== id));
-    toast({
-      title: "Item removido!",
-      description: "O item foi removido da galeria.",
-    });
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Mock image upload - replace with real upload after Supabase connection
-      const mockUrl = URL.createObjectURL(file);
-      setFormData(prev => ({ ...prev, image: mockUrl }));
-      toast({
-        title: "Imagem carregada!",
-        description: "A imagem foi carregada temporariamente.",
-      });
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Tem certeza que deseja remover este item?")) {
+      await deleteItem(id);
     }
   };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const imageUrl = await uploadImage(file);
+    if (imageUrl) {
+      setFormData(prev => ({ ...prev, image_url: imageUrl }));
+    }
+    setUploading(false);
+  };
+
+  if (loading) {
+    return <div>Carregando galeria...</div>;
+  }
 
   return (
     <Card className="border-cake-pink/20">
@@ -130,7 +82,7 @@ const GalleryManager = () => {
             <Button
               onClick={() => {
                 setEditingItem(null);
-                setFormData({ title: "", description: "", image: "", category: "" });
+                setFormData({ title: "", description: "", image_url: "", category: "" });
               }}
               className="bg-gradient-to-r from-cake-pink to-cake-rose hover:from-cake-rose hover:to-cake-pink text-white"
             >
@@ -190,13 +142,14 @@ const GalleryManager = () => {
                     accept="image/*"
                     onChange={handleImageUpload}
                     className="border-cake-pink/30 focus:border-cake-rose"
+                    disabled={uploading}
                   />
-                  <Upload className="h-4 w-4 text-cake-brown/60" />
+                  {uploading && <Upload className="h-4 w-4 text-cake-brown/60 animate-spin" />}
                 </div>
-                {formData.image && (
+                {formData.image_url && (
                   <div className="mt-2">
                     <img
-                      src={formData.image}
+                      src={formData.image_url}
                       alt="Preview"
                       className="w-full h-32 object-cover rounded-md border border-cake-pink/20"
                     />
@@ -206,6 +159,7 @@ const GalleryManager = () => {
 
               <Button
                 type="submit"
+                disabled={uploading}
                 className="w-full bg-gradient-to-r from-cake-pink to-cake-rose hover:from-cake-rose hover:to-cake-pink text-white"
               >
                 {editingItem ? "Atualizar" : "Adicionar"}
@@ -216,11 +170,11 @@ const GalleryManager = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {galleryItems.map((item) => (
+          {items.map((item) => (
             <Card key={item.id} className="border-cake-pink/20 overflow-hidden">
               <div className="aspect-square relative">
                 <img
-                  src={item.image}
+                  src={item.image_url}
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />
@@ -254,7 +208,7 @@ const GalleryManager = () => {
           ))}
         </div>
 
-        {galleryItems.length === 0 && (
+        {items.length === 0 && (
           <div className="text-center py-12">
             <ImageIcon className="mx-auto h-12 w-12 text-cake-brown/40 mb-4" />
             <p className="text-cake-brown/60">Nenhuma imagem na galeria ainda.</p>

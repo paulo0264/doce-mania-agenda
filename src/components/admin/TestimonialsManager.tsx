@@ -8,18 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Edit, Trash2, Star, MessageSquare } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useTestimonials } from "@/hooks/useTestimonials";
+import { Tables } from "@/integrations/supabase/types";
 
-interface Testimonial {
-  id: number;
-  name: string;
-  text: string;
-  rating: number;
-  date: string;
-}
+type Testimonial = Tables<'testimonials'>;
 
 const TestimonialsManager = () => {
-  const { toast } = useToast();
+  const { testimonials, loading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonials();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Testimonial | null>(null);
   const [formData, setFormData] = useState({
@@ -28,59 +23,13 @@ const TestimonialsManager = () => {
     rating: 5
   });
 
-  // Mock data - replace with real data after Supabase connection
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([
-    {
-      id: 1,
-      name: "Maria Silva",
-      text: "O bolo da minha filha ficou perfeito! Todos os convidados elogiaram o sabor e a decoração.",
-      rating: 5,
-      date: "2024-01-15"
-    },
-    {
-      id: 2,
-      name: "João Santos",
-      text: "Atendimento excepcional e bolo delicioso. Super recomendo a Doce Mania!",
-      rating: 5,
-      date: "2024-01-10"
-    },
-    {
-      id: 3,
-      name: "Ana Costa",
-      text: "Transformaram exatamente a ideia que eu tinha em mente. Ficou lindo e saboroso!",
-      rating: 5,
-      date: "2024-01-08"
-    }
-  ]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (editingItem) {
-      // Update existing testimonial
-      setTestimonials(items => 
-        items.map(item => 
-          item.id === editingItem.id 
-            ? { ...item, ...formData }
-            : item
-        )
-      );
-      toast({
-        title: "Depoimento atualizado!",
-        description: "O depoimento foi atualizado com sucesso.",
-      });
+      await updateTestimonial(editingItem.id, formData);
     } else {
-      // Add new testimonial
-      const newTestimonial: Testimonial = {
-        id: Date.now(),
-        ...formData,
-        date: new Date().toISOString().split('T')[0]
-      };
-      setTestimonials(items => [...items, newTestimonial]);
-      toast({
-        title: "Depoimento adicionado!",
-        description: "Novo depoimento foi adicionado com sucesso.",
-      });
+      await addTestimonial(formData);
     }
 
     setFormData({ name: "", text: "", rating: 5 });
@@ -98,12 +47,10 @@ const TestimonialsManager = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    setTestimonials(items => items.filter(item => item.id !== id));
-    toast({
-      title: "Depoimento removido!",
-      description: "O depoimento foi removido com sucesso.",
-    });
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Tem certeza que deseja remover este depoimento?")) {
+      await deleteTestimonial(id);
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -116,6 +63,10 @@ const TestimonialsManager = () => {
       />
     ));
   };
+
+  if (loading) {
+    return <div>Carregando depoimentos...</div>;
+  }
 
   return (
     <Card className="border-cake-pink/20">
@@ -230,7 +181,7 @@ const TestimonialsManager = () => {
                 </div>
                 <p className="text-cake-brown/80 text-sm italic">"{testimonial.text}"</p>
                 <p className="text-xs text-cake-brown/50 mt-2">
-                  {new Date(testimonial.date).toLocaleDateString('pt-BR')}
+                  {testimonial.date ? new Date(testimonial.date).toLocaleDateString('pt-BR') : ''}
                 </p>
               </CardContent>
             </Card>

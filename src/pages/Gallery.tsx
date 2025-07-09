@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useGallery } from "@/hooks/useGallery";
 
 const Gallery = () => {
   const [activeFilter, setActiveFilter] = useState("todos");
+  const { items: cakes, loading } = useGallery();
 
   const categories = [
     { id: "todos", name: "Todos" },
@@ -13,76 +15,19 @@ const Gallery = () => {
     { id: "casamento", name: "Casamento / Chá de Bebê" }
   ];
 
-  const cakes = [
-    {
-      id: 1,
-      name: "Bolo Unicórnio",
-      flavor: "Chocolate com Brigadeiro",
-      size: "Serve 20 pessoas",
-      category: "infantil",
-      image: "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 2,
-      name: "Bolo de Casamento Clássico",
-      flavor: "Baunilha com Frutas Vermelhas",
-      size: "Serve 80 pessoas",
-      category: "casamento",
-      image: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 3,
-      name: "Bolo Super-Herói",
-      flavor: "Chocolate Duplo",
-      size: "Serve 15 pessoas",
-      category: "infantil",
-      image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 4,
-      name: "Bolo Elegante Rosa",
-      flavor: "Red Velvet",
-      size: "Serve 25 pessoas",
-      category: "adulto",
-      image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 5,
-      name: "Bolo Chá de Bebê",
-      flavor: "Limão com Coco",
-      size: "Serve 30 pessoas",
-      category: "casamento",
-      image: "https://images.unsplash.com/photo-1562777717-dc6984f65a63?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 6,
-      name: "Bolo Princesa",
-      flavor: "Morango com Chantilly",
-      size: "Serve 18 pessoas",
-      category: "infantil",
-      image: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 7,
-      name: "Bolo Aniversário Dourado",
-      flavor: "Chocolate Belga",
-      size: "Serve 35 pessoas",
-      category: "adulto",
-      image: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&h=400&fit=crop&crop=center"
-    },
-    {
-      id: 8,
-      name: "Bolo Frozen",
-      flavor: "Baunilha com Doce de Leite",
-      size: "Serve 22 pessoas",
-      category: "infantil",
-      image: "https://images.unsplash.com/photo-1517427294546-5aa121d3467e?w=400&h=400&fit=crop&crop=center"
-    }
-  ];
-
   const filteredCakes = activeFilter === "todos" 
     ? cakes 
     : cakes.filter(cake => cake.category === activeFilter);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cake-cream to-white py-12">
+        <div className="container mx-auto px-4 text-center">
+          <p>Carregando galeria...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cake-cream to-white py-12">
@@ -124,26 +69,34 @@ const Gallery = () => {
             >
               <div className="relative overflow-hidden">
                 <img
-                  src={cake.image}
-                  alt={cake.name}
+                  src={cake.image_url}
+                  alt={cake.title}
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold text-cake-brown mb-2 group-hover:text-cake-rose transition-colors duration-300">
-                  {cake.name}
+                  {cake.title}
                 </h3>
-                <p className="text-cake-brown/70 mb-1">
-                  <span className="font-medium">Sabor:</span> {cake.flavor}
-                </p>
-                <p className="text-cake-brown/70">
-                  <span className="font-medium">Tamanho:</span> {cake.size}
-                </p>
+                {cake.description && (
+                  <p className="text-cake-brown/70 mb-1">
+                    {cake.description}
+                  </p>
+                )}
+                <span className="inline-block mt-2 px-2 py-1 bg-cake-pink/20 text-cake-rose text-xs rounded-full">
+                  {cake.category}
+                </span>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {filteredCakes.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-cake-brown/60">Nenhum item encontrado nesta categoria.</p>
+          </div>
+        )}
 
         {/* CTA Section */}
         <div className="text-center mt-16 bg-gradient-to-r from-cake-pink/10 to-cake-rose/10 rounded-2xl p-8">

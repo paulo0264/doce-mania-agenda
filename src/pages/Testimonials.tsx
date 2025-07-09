@@ -6,77 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, Heart, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTestimonials } from "@/hooks/useTestimonials";
 
 const Testimonials = () => {
   const { toast } = useToast();
+  const { testimonials, loading, addTestimonial } = useTestimonials();
   const [newTestimonial, setNewTestimonial] = useState({
     name: "",
     email: "",
-    message: "",
+    text: "",
     rating: 5
   });
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Maria Silva",
-      message: "O bolo da minha filha ficou perfeito! Todos os convidados elogiaram o sabor e a decoração. A Doce Mania superou todas as minhas expectativas!",
-      rating: 5,
-      date: "Janeiro 2024",
-      cakeType: "Bolo Unicórnio",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 2,
-      name: "João Santos",
-      message: "Atendimento excepcional e bolo delicioso. A equipe foi muito atenciosa e o resultado foi incrível. Super recomendo a Doce Mania!",
-      rating: 5,
-      date: "Dezembro 2023",
-      cakeType: "Bolo de Chocolate Gourmet",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 3,
-      name: "Ana Costa",
-      message: "Transformaram exatamente a ideia que eu tinha em mente. Ficou lindo e saboroso! Meu casamento ficou ainda mais especial.",
-      rating: 5,
-      date: "Novembro 2023",
-      cakeType: "Bolo de Casamento",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 4,
-      name: "Pedro Oliveira",
-      message: "Qualidade excepcional! O bolo não só estava lindo como tinha um sabor incrível. Todos perguntaram onde eu havia encomendado.",
-      rating: 5,
-      date: "Outubro 2023",
-      cakeType: "Bolo Temático Futebol",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 5,
-      name: "Carmen Rodriguez",
-      message: "O chá de bebê da minha irmã ficou perfeito! O bolo estava lindo e delicioso. Muito obrigada por tornarem esse dia tão especial!",
-      rating: 5,
-      date: "Setembro 2023",
-      cakeType: "Bolo Chá de Bebê",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b332c28c?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 6,
-      name: "Roberto Lima",
-      message: "Profissionalismo e qualidade em cada detalhe. O bolo de aniversário dos meus 50 anos ficou espetacular. Parabéns à equipe!",
-      rating: 5,
-      date: "Agosto 2023",
-      cakeType: "Bolo Elegante Dourado",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face"
-    }
-  ];
-
-  const handleSubmitTestimonial = (e: React.FormEvent) => {
+  const handleSubmitTestimonial = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!newTestimonial.name || !newTestimonial.message) {
+    if (!newTestimonial.name || !newTestimonial.text) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha seu nome e depoimento.",
@@ -85,19 +30,21 @@ const Testimonials = () => {
       return;
     }
 
-    // Aqui você integraria com um backend ou serviço
-    toast({
-      title: "Depoimento enviado!",
-      description: "Obrigado por compartilhar sua experiência conosco. Seu depoimento será analisado e publicado em breve.",
+    const { error } = await addTestimonial({
+      name: newTestimonial.name,
+      text: newTestimonial.text,
+      rating: newTestimonial.rating
     });
 
-    // Reset form
-    setNewTestimonial({
-      name: "",
-      email: "",
-      message: "",
-      rating: 5
-    });
+    if (!error) {
+      // Reset form
+      setNewTestimonial({
+        name: "",
+        email: "",
+        text: "",
+        rating: 5
+      });
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -110,6 +57,16 @@ const Testimonials = () => {
       />
     ));
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cake-cream to-white py-12">
+        <div className="container mx-auto px-4 text-center">
+          <p>Carregando depoimentos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cake-cream to-white py-12">
@@ -133,17 +90,15 @@ const Testimonials = () => {
             >
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full object-cover mr-4"
-                  />
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cake-pink to-cake-rose flex items-center justify-center text-white font-bold text-lg mr-4">
+                    {testimonial.name.charAt(0).toUpperCase()}
+                  </div>
                   <div>
                     <h3 className="font-semibold text-cake-brown">
                       {testimonial.name}
                     </h3>
                     <p className="text-sm text-cake-brown/60">
-                      {testimonial.date}
+                      {testimonial.date ? new Date(testimonial.date).toLocaleDateString('pt-BR') : ''}
                     </p>
                   </div>
                 </div>
@@ -153,14 +108,8 @@ const Testimonials = () => {
                 </div>
                 
                 <p className="text-cake-brown/80 mb-4 italic leading-relaxed">
-                  "{testimonial.message}"
+                  "{testimonial.text}"
                 </p>
-                
-                <div className="bg-cake-pink/10 rounded-lg p-3">
-                  <p className="text-sm text-cake-brown/70">
-                    <span className="font-medium">Pedido:</span> {testimonial.cakeType}
-                  </p>
-                </div>
               </CardContent>
             </Card>
           ))}
@@ -237,8 +186,8 @@ const Testimonials = () => {
                     Seu Depoimento *
                   </label>
                   <Textarea
-                    value={newTestimonial.message}
-                    onChange={(e) => setNewTestimonial({...newTestimonial, message: e.target.value})}
+                    value={newTestimonial.text}
+                    onChange={(e) => setNewTestimonial({...newTestimonial, text: e.target.value})}
                     placeholder="Conte-nos sobre sua experiência com a Doce Mania Cakes..."
                     rows={4}
                     className="border-cake-pink/30 focus:border-cake-rose resize-none"

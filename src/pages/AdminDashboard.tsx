@@ -7,46 +7,49 @@ import {
   LogOut, 
   Image as ImageIcon, 
   MessageSquare, 
-  BarChart3,
   Users,
   Calendar,
-  Plus
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useGallery } from "@/hooks/useGallery";
+import { useTestimonials } from "@/hooks/useTestimonials";
 import GalleryManager from "@/components/admin/GalleryManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
 
 const AdminDashboard = () => {
-  const { toast } = useToast();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, signOut, loading: authLoading } = useAuth();
+  const { items: galleryItems } = useGallery();
+  const { testimonials } = useTestimonials();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const authStatus = localStorage.getItem("isAdminAuthenticated");
-    if (authStatus === "true") {
-      setIsAuthenticated(true);
-    } else {
-      window.location.href = "/admin/login";
+    if (!authLoading && !user) {
+      navigate("/admin/login");
     }
-  }, []);
+  }, [user, authLoading, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAdminAuthenticated");
-    toast({
-      title: "Logout realizado",
-      description: "Você foi desconectado com sucesso.",
-    });
-    window.location.href = "/admin/login";
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/admin/login");
   };
 
-  if (!isAuthenticated) {
-    return <div>Verificando autenticação...</div>;
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cake-cream to-white flex items-center justify-center">
+        <div>Verificando autenticação...</div>
+      </div>
+    );
   }
 
-  // Mock stats - replace with real data after Supabase connection
+  if (!user) {
+    return null;
+  }
+
   const stats = [
-    { label: "Total de Imagens", value: "24", icon: ImageIcon },
-    { label: "Depoimentos", value: "18", icon: MessageSquare },
-    { label: "Agendamentos", value: "12", icon: Calendar },
+    { label: "Total de Imagens", value: galleryItems.length.toString(), icon: ImageIcon },
+    { label: "Depoimentos", value: testimonials.length.toString(), icon: MessageSquare },
+    { label: "Agendamentos", value: "0", icon: Calendar },
     { label: "Visitantes", value: "1.2k", icon: Users },
   ];
 
@@ -55,9 +58,14 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="bg-white border-b border-cake-pink/20 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-cake-brown font-script">
-            Painel Administrativo - Doce Mania
-          </h1>
+          <div>
+            <h1 className="text-2xl font-bold text-cake-brown font-script">
+              Painel Administrativo - Doce Mania
+            </h1>
+            <p className="text-sm text-cake-brown/60">
+              Bem-vindo, {user.user_metadata?.full_name || user.email}
+            </p>
+          </div>
           <Button
             onClick={handleLogout}
             variant="outline"
