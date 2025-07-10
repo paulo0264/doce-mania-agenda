@@ -14,13 +14,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useGallery } from "@/hooks/useGallery";
 import { useTestimonials } from "@/hooks/useTestimonials";
+import { useBookings } from "@/hooks/useBookings";
 import GalleryManager from "@/components/admin/GalleryManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
+import BookingsManager from "@/components/admin/BookingsManager";
 
 const AdminDashboard = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const { items: galleryItems } = useGallery();
   const { testimonials } = useTestimonials();
+  const { bookings } = useBookings();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const AdminDashboard = () => {
   const stats = [
     { label: "Total de Imagens", value: galleryItems.length.toString(), icon: ImageIcon },
     { label: "Depoimentos", value: testimonials.length.toString(), icon: MessageSquare },
-    { label: "Agendamentos", value: "0", icon: Calendar },
+    { label: "Agendamentos", value: bookings.length.toString(), icon: Calendar },
     { label: "Visitantes", value: "1.2k", icon: Users },
   ];
 
@@ -99,7 +102,7 @@ const AdminDashboard = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="gallery" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:w-1/2">
+          <TabsList className="grid w-full grid-cols-3 lg:w-2/3">
             <TabsTrigger value="gallery" className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4" />
               Galeria
@@ -107,6 +110,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="testimonials" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Depoimentos
+            </TabsTrigger>
+            <TabsTrigger value="bookings" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Agendamentos
             </TabsTrigger>
           </TabsList>
 
@@ -116,6 +123,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="testimonials">
             <TestimonialsManager />
+          </TabsContent>
+
+          <TabsContent value="bookings">
+            <BookingsManager />
           </TabsContent>
         </Tabs>
       </div>

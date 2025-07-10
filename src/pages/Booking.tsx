@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,23 +6,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Clock, Cake, Heart, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useBookings } from "@/hooks/useBookings";
 
 const Booking = () => {
   const { toast } = useToast();
+  const { addBooking } = useBookings();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     whatsapp: "",
-    eventDate: "",
-    cakeType: "",
+    event_date: "",
+    cake_type: "",
     flavor: "",
     size: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const cakeTypes = [
     "Aniversário Infantil",
-    "Aniversário Adulto",
+    "Aniversário Adulto", 
     "Casamento",
     "Chá de Bebê",
     "Chá de Panela",
@@ -35,7 +37,7 @@ const Booking = () => {
 
   const flavors = [
     "Chocolate",
-    "Baunilha",
+    "Baunilha", 
     "Morango",
     "Chocolate Belga",
     "Red Velvet",
@@ -51,7 +53,7 @@ const Booking = () => {
   const sizes = [
     "10-15 pessoas",
     "15-20 pessoas",
-    "20-30 pessoas",
+    "20-30 pessoas", 
     "30-40 pessoas",
     "40-60 pessoas",
     "60-80 pessoas",
@@ -63,11 +65,11 @@ const Booking = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation
-    if (!formData.name || !formData.phone || !formData.eventDate || !formData.cakeType) {
+    if (!formData.name || !formData.phone || !formData.event_date || !formData.cake_type) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios.",
@@ -76,25 +78,36 @@ const Booking = () => {
       return;
     }
 
-    // Here you would integrate with your backend, Zapier, Google Calendar, etc.
-    console.log("Booking data:", formData);
-    
-    toast({
-      title: "Agendamento enviado!",
-      description: "Recebemos seu pedido e entraremos em contato em breve via WhatsApp para confirmar os detalhes.",
-    });
+    setIsSubmitting(true);
 
-    // Reset form
-    setFormData({
-      name: "",
-      phone: "",
-      whatsapp: "",
-      eventDate: "",
-      cakeType: "",
-      flavor: "",
-      size: "",
-      message: ""
-    });
+    try {
+      await addBooking({
+        name: formData.name,
+        phone: formData.phone,
+        whatsapp: formData.whatsapp || undefined,
+        event_date: formData.event_date,
+        cake_type: formData.cake_type,
+        flavor: formData.flavor || undefined,
+        size: formData.size || undefined,
+        message: formData.message || undefined,
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        whatsapp: "",
+        event_date: "",
+        cake_type: "",
+        flavor: "",
+        size: "",
+        message: ""
+      });
+    } catch (error) {
+      // Error handled in hook
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const today = new Date().toISOString().split('T')[0];
@@ -137,6 +150,7 @@ const Booking = () => {
                             onChange={(e) => handleInputChange("name", e.target.value)}
                             placeholder="Seu nome completo"
                             className="border-cake-pink/30 focus:border-cake-rose"
+                            required
                           />
                         </div>
                         
@@ -150,6 +164,7 @@ const Booking = () => {
                             onChange={(e) => handleInputChange("phone", e.target.value)}
                             placeholder="(11) 99999-9999"
                             className="border-cake-pink/30 focus:border-cake-rose"
+                            required
                           />
                         </div>
                         
@@ -182,10 +197,11 @@ const Booking = () => {
                           </label>
                           <Input
                             type="date"
-                            value={formData.eventDate}
-                            onChange={(e) => handleInputChange("eventDate", e.target.value)}
+                            value={formData.event_date}
+                            onChange={(e) => handleInputChange("event_date", e.target.value)}
                             min={today}
                             className="border-cake-pink/30 focus:border-cake-rose"
+                            required
                           />
                         </div>
                         
@@ -193,7 +209,7 @@ const Booking = () => {
                           <label className="text-sm font-medium text-cake-brown mb-2 block">
                             Tipo de Bolo *
                           </label>
-                          <Select value={formData.cakeType} onValueChange={(value) => handleInputChange("cakeType", value)}>
+                          <Select value={formData.cake_type} onValueChange={(value) => handleInputChange("cake_type", value)} required>
                             <SelectTrigger className="border-cake-pink/30 focus:border-cake-rose">
                               <SelectValue placeholder="Selecione o tipo" />
                             </SelectTrigger>
@@ -273,10 +289,11 @@ const Booking = () => {
                     <Button
                       type="submit"
                       size="lg"
-                      className="w-full bg-gradient-to-r from-cake-pink to-cake-rose hover:from-cake-rose hover:to-cake-pink text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-to-r from-cake-pink to-cake-rose hover:from-cake-rose hover:to-cake-pink text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                     >
                       <CheckCircle className="mr-2 h-5 w-5" />
-                      Enviar Pedido
+                      {isSubmitting ? "Enviando..." : "Enviar Pedido"}
                     </Button>
                   </form>
                 </CardContent>

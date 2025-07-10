@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          cake_type: string
+          created_at: string | null
+          event_date: string
+          flavor: string | null
+          id: string
+          message: string | null
+          name: string
+          phone: string
+          size: string | null
+          status: string | null
+          updated_at: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          cake_type: string
+          created_at?: string | null
+          event_date: string
+          flavor?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          phone: string
+          size?: string | null
+          status?: string | null
+          updated_at?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          cake_type?: string
+          created_at?: string | null
+          event_date?: string
+          flavor?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string
+          size?: string | null
+          status?: string | null
+          updated_at?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       gallery_items: {
         Row: {
           category: string
