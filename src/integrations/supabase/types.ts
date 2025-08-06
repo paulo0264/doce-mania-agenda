@@ -10,216 +10,139 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
-      appointments: {
+      bookings: {
         Row: {
-          appointment_date: string
-          appointment_time: string
-          client_email: string | null
-          client_name: string
-          client_phone: string
+          cake_type: string
           created_at: string | null
+          event_date: string
+          flavor: string | null
           id: string
-          notes: string | null
-          notification_sent: boolean | null
-          service_id: string | null
-          status: Database["public"]["Enums"]["appointment_status"] | null
+          message: string | null
+          name: string
+          phone: string
+          size: string | null
+          status: string | null
           updated_at: string | null
-          user_id: string | null
+          whatsapp: string | null
         }
         Insert: {
-          appointment_date: string
-          appointment_time: string
-          client_email?: string | null
-          client_name: string
-          client_phone: string
+          cake_type: string
           created_at?: string | null
+          event_date: string
+          flavor?: string | null
           id?: string
-          notes?: string | null
-          notification_sent?: boolean | null
-          service_id?: string | null
-          status?: Database["public"]["Enums"]["appointment_status"] | null
+          message?: string | null
+          name: string
+          phone: string
+          size?: string | null
+          status?: string | null
           updated_at?: string | null
-          user_id?: string | null
+          whatsapp?: string | null
         }
         Update: {
-          appointment_date?: string
-          appointment_time?: string
-          client_email?: string | null
-          client_name?: string
-          client_phone?: string
+          cake_type?: string
           created_at?: string | null
+          event_date?: string
+          flavor?: string | null
           id?: string
-          notes?: string | null
-          notification_sent?: boolean | null
-          service_id?: string | null
-          status?: Database["public"]["Enums"]["appointment_status"] | null
+          message?: string | null
+          name?: string
+          phone?: string
+          size?: string | null
+          status?: string | null
           updated_at?: string | null
-          user_id?: string | null
+          whatsapp?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "appointments_service_id_fkey"
-            columns: ["service_id"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      gallery_items: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
           created_at: string | null
+          email: string | null
           full_name: string | null
           id: string
-          phone: string | null
+          role: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
-          phone?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
-          phone?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
-      services: {
+      testimonials: {
         Row: {
-          active: boolean | null
           created_at: string | null
-          duration: number
+          date: string | null
           id: string
           name: string
-          price: number
+          rating: number
+          text: string
           updated_at: string | null
         }
         Insert: {
-          active?: boolean | null
           created_at?: string | null
-          duration: number
+          date?: string | null
           id?: string
           name: string
-          price: number
+          rating?: number
+          text: string
           updated_at?: string | null
         }
         Update: {
-          active?: boolean | null
           created_at?: string | null
-          duration?: number
+          date?: string | null
           id?: string
           name?: string
-          price?: number
+          rating?: number
+          text?: string
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      system_settings: {
-        Row: {
-          auto_backup: boolean | null
-          business_address: string | null
-          business_description: string | null
-          business_email: string | null
-          business_name: string | null
-          business_phone: string | null
-          created_at: string | null
-          email_notifications: boolean | null
-          id: string
-          language: string | null
-          notifications: boolean | null
-          sms_notifications: boolean | null
-          theme: string | null
-          timezone: string | null
-          updated_at: string | null
-          user_id: string | null
-          whatsapp_integration: boolean | null
-        }
-        Insert: {
-          auto_backup?: boolean | null
-          business_address?: string | null
-          business_description?: string | null
-          business_email?: string | null
-          business_name?: string | null
-          business_phone?: string | null
-          created_at?: string | null
-          email_notifications?: boolean | null
-          id?: string
-          language?: string | null
-          notifications?: boolean | null
-          sms_notifications?: boolean | null
-          theme?: string | null
-          timezone?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          whatsapp_integration?: boolean | null
-        }
-        Update: {
-          auto_backup?: boolean | null
-          business_address?: string | null
-          business_description?: string | null
-          business_email?: string | null
-          business_name?: string | null
-          business_phone?: string | null
-          created_at?: string | null
-          email_notifications?: boolean | null
-          id?: string
-          language?: string | null
-          notifications?: boolean | null
-          sms_notifications?: boolean | null
-          theme?: string | null
-          timezone?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          whatsapp_integration?: boolean | null
-        }
-        Relationships: []
-      }
-      working_hours: {
-        Row: {
-          created_at: string | null
-          day_of_week: Database["public"]["Enums"]["day_of_week"]
-          end_time: string
-          id: string
-          is_working: boolean | null
-          lunch_end: string | null
-          lunch_start: string | null
-          start_time: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          day_of_week: Database["public"]["Enums"]["day_of_week"]
-          end_time: string
-          id?: string
-          is_working?: boolean | null
-          lunch_end?: string | null
-          lunch_start?: string | null
-          start_time: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          day_of_week?: Database["public"]["Enums"]["day_of_week"]
-          end_time?: string
-          id?: string
-          is_working?: boolean | null
-          lunch_end?: string | null
-          lunch_start?: string | null
-          start_time?: string
-          updated_at?: string | null
-          user_id?: string | null
         }
         Relationships: []
       }
@@ -231,15 +154,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      appointment_status: "confirmado" | "pendente" | "cancelado"
-      day_of_week:
-        | "segunda"
-        | "terca"
-        | "quarta"
-        | "quinta"
-        | "sexta"
-        | "sabado"
-        | "domingo"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -366,17 +281,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      appointment_status: ["confirmado", "pendente", "cancelado"],
-      day_of_week: [
-        "segunda",
-        "terca",
-        "quarta",
-        "quinta",
-        "sexta",
-        "sabado",
-        "domingo",
-      ],
-    },
+    Enums: {},
   },
 } as const
