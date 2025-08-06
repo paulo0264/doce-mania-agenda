@@ -116,7 +116,7 @@ const Testimonials = () => {
         </div>
 
         {/* New Testimonial Form */}
-        <div className="max-w-2xl mx-auto">
+        {/* <div className="max-w-2xl mx-auto">
           <Card className="border-cake-pink/20 shadow-lg">
             <CardContent className="p-8">
               <div className="text-center mb-8">
@@ -205,7 +205,7 @@ const Testimonials = () => {
               </form>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </div>
   );
