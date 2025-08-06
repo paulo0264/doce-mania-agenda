@@ -4,7 +4,6 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/04471cae-b6db-4777-b713-c570d53a3b7e
 
 Follow these steps:
 
