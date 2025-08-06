@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to your project
 
 <img width="1892" height="836" alt="Image" src="https://github.com/user-attachments/assets/33c84cfa-83b6-4fe3-906b-5449167c6dbf" />
 
