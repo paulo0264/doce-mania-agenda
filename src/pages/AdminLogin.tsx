@@ -63,10 +63,10 @@ const AdminLogin = () => {
         
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            {/* <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Entrar</TabsTrigger>
               <TabsTrigger value="signup">Cadastrar</TabsTrigger>
-            </TabsList>
+            </TabsList> */}
             
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">

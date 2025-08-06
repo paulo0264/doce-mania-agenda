@@ -368,7 +368,7 @@ const Booking = () => {
                     variant="secondary"
                     className="bg-white text-cake-rose hover:bg-cake-cream"
                   >
-                    <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer">
+                    <a href="https://wa.me/5584996854656" target="_blank" rel="noopener noreferrer">
                       Chamar no WhatsApp
                     </a>
                   </Button>

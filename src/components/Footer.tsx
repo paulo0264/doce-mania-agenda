@@ -17,7 +17,7 @@ const Footer = () => {
                 <h3 className="text-xl font-bold text-cake-brown font-script">
                   Doce Mania
                 </h3>
-                <p className="text-sm text-cake-rose -mt-1">Cakes</p>
+                <p className="text-sm text-cake-rose -mt-1">Caks</p>
               </div>
             </Link>
             <p className="text-cake-brown/80 text-sm leading-relaxed">
@@ -70,7 +70,6 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-cake-brown/80">
               <li>Bolos de Aniversário</li>
               <li>Bolos Infantis</li>
-              <li>Bolos de Casamento</li>
               <li>Chá de Bebê</li>
               <li>Eventos Corporativos</li>
               <li>Bolos Temáticos</li>
@@ -83,25 +82,25 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-cake-rose" />
-                <span className="text-sm text-cake-brown/80">(11) 99999-9999</span>
+                <span className="text-sm text-cake-brown/80">(84) 99685-4656</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-cake-rose" />
-                <span className="text-sm text-cake-brown/80">contato@docemaniacakes.com</span>
+                <span className="text-sm text-cake-brown/80">docemaniacaks@gmail.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-cake-rose" />
-                <span className="text-sm text-cake-brown/80">São Paulo, SP</span>
+                <span className="text-sm text-cake-brown/80">Rodolfo Fernandes, RN</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Instagram className="h-4 w-4 text-cake-rose" />
                 <a
-                  href="https://instagram.com/docemaniacakes"
+                  href="https://instagram.com/docemaniacaks"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-cake-brown/80 hover:text-cake-rose transition-colors"
                 >
-                  @docemaniacakes
+                  @docemaniacaks
                 </a>
               </div>
             </div>
@@ -110,7 +109,7 @@ const Footer = () => {
 
         <div className="border-t border-cake-pink/20 mt-8 pt-8 text-center">
           <p className="text-cake-brown/60 text-sm">
-            © 2024 Doce Mania Cakes. Todos os direitos reservados. Feito com ❤️ para adoçar seus momentos especiais.
+            © 2025 Doce Mania Caks. Todos os direitos reservados. Feito com ❤️ para adoçar seus momentos especiais.
           </p>
         </div>
       </div>

@@ -55,28 +55,28 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Telefone / WhatsApp",
-      content: "(11) 99999-9999",
-      action: "https://wa.me/5511999999999",
+      content: "(11) 99685-4656",
+      action: "https://wa.me/5584996854656",
       actionText: "Chamar no WhatsApp"
     },
     {
       icon: Mail,
       title: "E-mail",
-      content: "contato@docemaniacakes.com",
-      action: "mailto:contato@docemaniacakes.com",
+      content: "docemaniacaks@gmail.com",
+      action: "docemaniacaks@gmail.com",
       actionText: "Enviar E-mail"
     },
     {
       icon: MapPin,
       title: "Localização",
-      content: "São Paulo, SP",
-      subtitle: "Entregamos em toda a Grande São Paulo"
+      content: "Rodolfo Fernandes, RN",
+      subtitle: "Rua: Martinho Cavalcante Dantas"
     },
     {
       icon: Instagram,
       title: "Instagram",
       content: "@docemaniacakes",
-      action: "https://instagram.com/docemaniacakes",
+      action: "https://instagram.com/docemaniacaks",
       actionText: "Seguir no Instagram"
     }
   ];

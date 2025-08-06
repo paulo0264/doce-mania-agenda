@@ -31,7 +31,7 @@ const Header = () => {
               <h1 className="text-xl font-bold text-cake-brown font-script">
                 Doce Mania
               </h1>
-              <p className="text-xs text-cake-rose -mt-1">Cakes</p>
+              <p className="text-xs text-cake-rose -mt-1">Caks</p>
             </div>
           </Link>
 
